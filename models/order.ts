@@ -1,8 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
-module.exports = (sequelize, DataTypes) => {
+import { Model, Sequelize } from 'sequelize';
+export default function (sequelize: Sequelize, DataTypes: any) {
   class Order extends Model {
     /**
      * Helper method for defining associations.

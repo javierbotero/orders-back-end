@@ -5,7 +5,7 @@ import { db } from '../db/db.js';
 const router = express.Router();
 const Product = model(db, DataTypes);
 router.get('/', async (req, res) => {
-    const products = await Product.findAll({ relation: 'products' });
+    const products = await Product.findAll();
     res.json(products);
 });
 export default router;

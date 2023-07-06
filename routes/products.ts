@@ -7,7 +7,7 @@ const router = express.Router();
 const Product = model(db, DataTypes);
 
 router.get('/', async (req: Request, res: Response) => {
-  const products = await Product.findAll({ relation: 'products'});
+  const products = await Product.findAll();
   res.json(products);
 });
 
