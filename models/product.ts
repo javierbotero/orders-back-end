@@ -13,7 +13,7 @@ export default function buildProduct(sequelize: Sequelize, DataTypes: any) {
   }
   Product.init({
     name: DataTypes.STRING,
-    onStock: DataTypes.NUMBER,
+    onStock: DataTypes.INTEGER,
     price: DataTypes.DECIMAL
   }, {
     sequelize,

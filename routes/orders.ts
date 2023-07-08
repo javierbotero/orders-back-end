@@ -13,33 +13,97 @@ const upload = multer();
 router.use(upload.array('name'))
 
 router.get('/', async (req: Request, res: Response) => {
-  const products = await Order.findAll();
-  res.json(products);
-});
-router.post('/', async (req: Request, res: Response) => {
-  const { firstName, lastName, address,
-    productId, quantity } = req.body;
-  console.log(typeof productId, productId);
-  console.log(req.body);
-  const productIdParsed = parseInt(productId, 10);
-  const onStockParsed = parseInt(quantity, 10);
-  const product = await Product.findByPk(productIdParsed);
-  if (product) {
-    product.onStock -= onStockParsed;
-    if(product.onStock >= 0) {
-      await product.save();
-    } else {
-      res.json('No stock available');
-    }
+  try {
+    const products = await Order.findAll();
+    res.json(products);
+  } catch (err) {
+    res.json({ error: err });
   }
-  const order = await Order.create({
-    firstName,
-    lastName,
-    address,
-    productId: productIdParsed,
-    quantity: onStockParsed
-  });
-  res.json(order.toJSON());
 });
+
+router.get('/:id', async (req: Request, res: Response) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    const order = await Order.findByPk(id);
+    if (order) {
+      res.json(order)
+    } else {
+      res.json('Order not found');
+    };
+  } catch (err) {
+    res.json({ error: err });
+  }
+})
+
+router.post('/', async (req: Request, res: Response) => {
+  try {
+    const { firstName, lastName, address,
+      productId, quantity } = req.body;
+    const productIdParsed = parseInt(productId, 10);
+    const onStockParsed = parseInt(quantity, 10);
+    const product = await Product.findByPk(productIdParsed);
+    if (product) {
+      product.onStock -= onStockParsed;
+      if(product.onStock >= 0) {
+        await product.save();
+      } else {
+        res.json('No stock available');
+      }
+    }
+    const order = await Order.create({
+      firstName,
+      lastName,
+      address,
+      productId: productIdParsed,
+      quantity: onStockParsed
+    });
+
+    res.json(order.toJSON());
+  } catch (err) {
+    res.json({ error: err });
+  }
+});
+
+router.put('/:id', async (req: Request, res: Response) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    const { firstName, lastName, address,
+      quantity } = req.body;
+    const onStockParsed = parseInt(quantity, 10);
+    const instanceOrder = await Order.findByPk(id);
+    const instanceProduct = await Product.findByPk(instanceOrder.productId);
+
+    if (onStockParsed < 0) {
+      res.json('Not allowed negative quantities');
+    } else if (instanceOrder && instanceProduct) {
+      if (instanceOrder.quantity > onStockParsed) {
+        instanceProduct.onStock += (instanceOrder.quantity - onStockParsed)
+      } else if (instanceOrder.quantity < onStockParsed) {
+        instanceProduct.onStock -= (onStockParsed - instanceOrder.quantity)
+      }
+      instanceProduct.save();
+    }
+    const result = await instanceOrder.update({
+      firstName,
+      lastName,
+      address,
+      quantity: onStockParsed
+    })
+    res.json(result);
+  } catch (err) {
+    res.json({ error: err });
+  }
+})
+
+router.delete('/:id', async (req: Request, res: Response) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    const order = await Order.findByPk(id);
+    if (order) { await order.destroy() } else { res.json({ error: 'Order does not exist' }) }
+    res.json(`Order ${id} was deleted`);
+  } catch (err) {
+    res.json({ error: err });
+  }
+})
 
 export default router;
