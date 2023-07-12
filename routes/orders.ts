@@ -1,5 +1,5 @@
 import express, { Request, Response }  from 'express';
-import { DataTypes } from 'sequelize';
+import { DataTypes, Attributes, Model } from 'sequelize';
 import multer from 'multer';
 import model from '../models/order.js';
 import modelProduct from '../models/product.js';
@@ -10,6 +10,8 @@ const router = express.Router();
 const Order = model(db, DataTypes);
 const Product = modelProduct(db, DataTypes);
 const upload = multer();
+
+type Instance = Attributes<Model>;
 
 router.use(upload.array('name'));
 router.use(middlewareOrders);
@@ -26,7 +28,7 @@ router.get('/', async (req: Request, res: Response) => {
 router.get('/:id', async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id, 10);
-    const order = await Order.findByPk(id);
+    const order: Instance = await Order.findByPk(id);
     if (order) {
       res.json(order)
     } else {
@@ -43,7 +45,7 @@ router.post('/', async (req: Request, res: Response) => {
       productId, quantity } = req.body;
     const productIdParsed = parseInt(productId, 10);
     const onStockParsed = parseInt(quantity, 10);
-    const product = await Product.findByPk(productIdParsed);
+    const product: Instance = await Product.findByPk(productIdParsed);
     if (product) {
       product.onStock -= onStockParsed;
       if(product.onStock >= 0) {
@@ -72,8 +74,8 @@ router.put('/:id', async (req: Request, res: Response) => {
     const { firstName, lastName, address,
       quantity } = req.body;
     const onStockParsed = parseInt(quantity, 10);
-    const instanceOrder = await Order.findByPk(id);
-    const instanceProduct = await Product.findByPk(instanceOrder.productId);
+    const instanceOrder: Instance = await Order.findByPk(id);
+    const instanceProduct: Instance = await Product.findByPk(instanceOrder.productId);
 
     if (onStockParsed < 0) {
       res.json('Not allowed negative quantities');
@@ -100,7 +102,7 @@ router.put('/:id', async (req: Request, res: Response) => {
 router.delete('/:id', async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id, 10);
-    const order = await Order.findByPk(id);
+    const order: Instance = await Order.findByPk(id);
     if (order) { await order.destroy() } else { res.json({ error: 'Order does not exist' }) }
     res.json(`Order ${id} was deleted`);
   } catch (err) {

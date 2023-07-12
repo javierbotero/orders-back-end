@@ -4,6 +4,9 @@ import ProductsRouter from './routes/products.js';
 import OrdersRouter from './routes/orders.js';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import 'dotenv/config';
+
+console.log('process.env ---->', process.env);
 
 const app = express();
 const port = 3001;

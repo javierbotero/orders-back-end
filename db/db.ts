@@ -1,11 +1,14 @@
 import { Sequelize, DataTypes } from 'sequelize';
 import modelProduct from '../models/product.js';
 import modelOrder from '../models/order.js';
+import config from '../config/config.js';
+
+console.log('process.env.NODE_ENV: ', process.env.NODE_ENV)
 
 const db = new Sequelize(
-  'orders_conserva',
-  'postgres',
-  'password',
+  config[process.env.NODE_ENV as string]['database'],
+  config[process.env.NODE_ENV as string]['username'],
+  config[process.env.NODE_ENV as string]['password'],
   {
     host: 'db',
     port: 5432,
