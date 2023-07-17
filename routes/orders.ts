@@ -5,18 +5,18 @@ import model from '../models/order.js';
 import modelProduct from '../models/product.js';
 import { db } from '../db/db.js';
 import { middlewareOrders } from '../schemas/order.js';
+import type { Instance } from '../types/models.js';
 
 const router = express.Router();
 const Order = model(db, DataTypes);
 const Product = modelProduct(db, DataTypes);
 const upload = multer();
 
-type Instance = Attributes<Model>;
-
 router.use(upload.array('name'));
 router.use(middlewareOrders);
 
 router.get('/', async (req: Request, res: Response) => {
+  console.log('Passing here ***');
   try {
     const products = await Order.findAll();
     res.json(products);

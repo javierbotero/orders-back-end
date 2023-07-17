@@ -1,10 +1,8 @@
 import 'dotenv/config';
 
 type Config = {
-  [index: string]: { [index: string]: string | null | undefined}
+  [index: string]: { [index: string]: any };
 };
-
-console.log('process.env.DEV_PASSWORD: ', process.env.DEV_PASSWORD);
 
 const config: Config = {
   "development": {
@@ -16,7 +14,7 @@ const config: Config = {
   },
   "test": {
     "username": process.env.TEST_USERNAME,
-    "password": process.env.TEST_PASSWORD,
+    "password": process.env.POSTGRES_PASSWORD,
     "database": process.env.TEST_DATABASE,
     "host": "db",
     "dialect": "postgres"

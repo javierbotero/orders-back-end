@@ -6,13 +6,10 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import 'dotenv/config';
 
-console.log('process.env ---->', process.env);
-
 const app = express();
 const port = 3001;
 
 app.use(bodyParser.json()) // for parsing application/json
-// app.use(bodyParser.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 app.use(cors());
 
 try {
@@ -28,4 +25,4 @@ app.listen(port, () => {
   console.log(`listening on port ${port}`);
 });
 
-export {}
+export { app }

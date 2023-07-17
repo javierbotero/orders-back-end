@@ -12,6 +12,11 @@ export default function buildProduct(sequelize: Sequelize, DataTypes: any) {
     }
   }
   Product.init({
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true
+    },
     name: DataTypes.STRING,
     onStock: DataTypes.INTEGER,
     price: DataTypes.DECIMAL

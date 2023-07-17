@@ -1,4 +1,4 @@
-- To run the orchestartion:
+- To run the orchestration:
 
 ```docker-compose up --build```
 
